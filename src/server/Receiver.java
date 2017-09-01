@@ -19,11 +19,11 @@ public class Receiver {
 		
 		System.out.println("boop");
 		
-		int ops = serverSocket.validOps();
-		
-		SelectionKey selectKey = serverSocket.register(selector, ops);
-		
 		while(true) {
+			int ops = serverSocket.validOps();
+			
+			SelectionKey selectKey = serverSocket.register(selector, ops);
+			
 			int noOfKeys = selector.select();
 			
 			Set<SelectionKey> selectedKeys = selector.selectedKeys();
@@ -47,7 +47,7 @@ public class Receiver {
 						ByteBuffer buf = ByteBuffer.allocate(BassoonDriver.MESSAGE_LENGTH_IN_BYTES);
 						int bytesRead = client.read(buf);
 						assert(bytesRead == BassoonDriver.MESSAGE_LENGTH_IN_BYTES);
-						System.out.println(new String(buf.array()));
+						System.out.println(new String(buf.array()).trim());
 					}
 				}
 			}

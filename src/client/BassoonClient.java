@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import driver.BassoonDriver;
@@ -16,6 +17,7 @@ public class BassoonClient {
 		try {
 			client = SocketChannel.open(new InetSocketAddress(BassoonDriver.hostname, BassoonDriver.portnum));
 			buffer = ByteBuffer.allocate(BassoonDriver.MESSAGE_LENGTH_IN_BYTES);
+			client.configureBlocking(false);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -25,53 +27,35 @@ public class BassoonClient {
 		String line = "";
 		System.out.print("Enter message>");
 		while((line = scan.nextLine()) != null) {
-			System.out.println("Client read: " + line);
 			sendMessage(line);
+			String msg = readMessage();
+			if(msg != null) {
+				System.out.println(msg);
+			}
 		}
-		
-		
-		
-		
-/*		PrintWriter out = null;
-		BufferedReader in = null;
-		
-		try {
-			System.out.println("beep");
-			Socket socket = new Socket(BassoonDriver.hostname, BassoonDriver.portnum);
-			out = new PrintWriter(socket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-		
-		Scanner scan = new Scanner(System.in);
-		
-		String line = "";
-		System.out.print("Enter message>");
-		while((line = scan.nextLine()) != null) {
-			ByteBuffer buf = ByteBuffer.allocate(BassoonDriver.MESSAGE_LENGTH_IN_BYTES);
-			buf.put(line.getBytes());
-			System.out.println(buf);
-			out.println(line);
-			out.flush();
-		}*/
 	}
 	
 	public void sendMessage(String msg) {
-		buffer = ByteBuffer.wrap(msg.getBytes());
+		buffer = ByteBuffer.wrap(Arrays.copyOf(msg.getBytes(), BassoonDriver.MESSAGE_LENGTH_IN_BYTES));
 		//String response = null;
 		try {
 			client.write(buffer);
-
-			/*
-			buffer.clear();
-			client.read(buffer);
-			response = new String(buffer.array()).trim();
-			System.out.println("response="+response);
-			buffer.clear();
-			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String readMessage() {
+		buffer = ByteBuffer.allocate(BassoonDriver.MESSAGE_LENGTH_IN_BYTES);
+		//String response = null;
+		try {
+			client.read(buffer);
+			String msg = new String(buffer.array()).trim();
+			return msg;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

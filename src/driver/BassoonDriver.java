@@ -1,6 +1,5 @@
 package driver;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import client.BassoonClient;
 import server.BassoonServer;
@@ -9,42 +8,45 @@ public class BassoonDriver {
 
 	public static String hostname = "localhost";
 	public static int portnum = 8372;
-	public static BassoonServer server;
-	public static ArrayList<BassoonClient> clients;
 	
 	/**
 	 * All this does is launch clients and a server.
 	 * We'll wanna add command arguments, such as "c <hostname> <port>" eventually. TODO
 	 */
 	public static void main(String[] args) {
-		clients = new ArrayList<BassoonClient>();
-		Scanner scan = new Scanner(System.in);
+		for(String str : args) {
+			System.out.println(str);
+		}
 		
 		System.out.println("Welcome to FurryBassoonDriver!");
-		System.out.println("Enter 'c' to launch a client, or 's' to launch the server.");
-		System.out.println("Enter 'q' to quit.");
 		
-		String line = "";
-/*		while(!(line = scan.nextLine()).equals("q")) {
-			if(line.equals("c")) {
-				clients.add(new BassoonClient(hostname, portnum));
+		if(args.length < 1) {
+			printUsage();
+		} else if (args[0].equals("s")) {
+			if(args.length > 1) {
+				portnum = Integer.parseInt(args[1]);
 			}
-			if(line.equals("s")) {
-				if(server == null) {
-					server = new BassoonServer(portnum);
-				} else {
-					System.out.println("Server is already running!");
-				}
+			System.out.println("Launching server on port " + portnum + "...");
+			BassoonServer server = new BassoonServer(portnum);
+		} else if (args[0].equals("c")) {
+			if(args.length > 1) {
+				hostname = args[1];
+				portnum = Integer.parseInt(args[2]);
 			}
-		}*/
-		
-		server = new BassoonServer(portnum);
-		clients.add(new BassoonClient(hostname, portnum));
-		
+			System.out.println("Launching client to connect to" + hostname + ":" + portnum + "...");
+			BassoonClient client = new BassoonClient(hostname, portnum);
+		} else {
+			printUsage();
+		}
 	}
 	
 	/**
 	 * Temp globals storage
 	 */
 	public static int MESSAGE_LENGTH_IN_BYTES = 128;
+	
+	private static void printUsage() {
+		System.out.println("Usage for server: s portnum");
+		System.out.println("Usage for client: c hostname portnum");
+	}
 }
