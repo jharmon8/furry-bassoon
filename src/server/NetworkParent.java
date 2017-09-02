@@ -19,5 +19,7 @@ public class NetworkParent {
 		serverSocket.bind(hostAddress);
 		
 		serverSocket.configureBlocking(false);
+		
+		
 	}
 }
