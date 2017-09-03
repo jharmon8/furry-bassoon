@@ -1,5 +1,6 @@
 package server;
 
+import interpreter.WelcomeUtil;
 import io.netty.channel.ChannelHandlerContext;
 import resources.Player;
 
@@ -10,15 +11,21 @@ import resources.Player;
  */
 public class User {
     ChannelHandlerContext ctx;
-    Player player;
+    public Player player;
+    public UserState state;
+
+    WelcomeUtil welcomeUtil = null;
 
     public User(ChannelHandlerContext ctx) {
         this.ctx = ctx;
         this.player = null;
+        this.state = UserState.USERNAME;
+        this.welcomeUtil = new WelcomeUtil();
     }
 
-    public User(ChannelHandlerContext ctx, Player player) {
+    public User(ChannelHandlerContext ctx, Player player) { // probably gonna be deprecated
         this.ctx = ctx;
         this.player = player;
+        this.state = UserState.GAME; // idk what this is for
     }
 }
