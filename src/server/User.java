@@ -10,11 +10,11 @@ import resources.Player;
  * but the player will equal null until character creation is finished
  */
 public class User {
-    ChannelHandlerContext ctx;
+    public ChannelHandlerContext ctx;
     public Player player;
     public UserState state;
 
-    WelcomeUtil welcomeUtil = null;
+    public WelcomeUtil welcomeUtil = null;
 
     public User(ChannelHandlerContext ctx) {
         this.ctx = ctx;

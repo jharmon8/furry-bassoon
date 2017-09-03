@@ -44,14 +44,21 @@ public class GameLoop implements Runnable {
                         // bye jerk
                         break;
                     case PARSE:
-                        if(ge.user.state == UserState.USERNAME) {
-                            if(WelcomeUtil.login(ge.user, ge.userMsg)) {
-                                ge.user.state = UserState.GAME;
-                                ge.user.ctx.writeAndFlush(stringToBuffer("Server says: " + ge.userMsg));
-                                // TODO send environment description here
-                            } else {
-                                ge.welcomeUtil.setUsername(ge.user, ge.userMsg);
-                            }
+                        switch(ge.user.state) {
+                            case USERNAME:
+                                if(WelcomeUtil.login(ge.user, ge.userMsg)) { // no passwords for now
+                                    ge.user.state = UserState.GAME;
+                                    ge.user.ctx.writeAndFlush(stringToBuffer("Welcome " + ge.user.player.username));
+                                    // TODO send environment description here
+                                } else {
+                                    ge.user.welcomeUtil.setUsername(ge.user, ge.userMsg); // enters character creation
+//                                    ge.user.state = UserState.CREATION;
+//                                    ge.user.ctx.writeAndFlush(stringToBuffer("Player does not exist. Create new player?"));
+                                }
+                                break;
+                            case CREATION:
+                                ge.user.welcomeUtil.creationUpdate(ge.user, ge.userMsg);
+                                break;
                         }
                         break;
                     case DEBUG:
