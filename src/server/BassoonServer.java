@@ -1,11 +1,7 @@
 package server;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -15,6 +11,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 
+import java.util.HashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class BassoonServer {
@@ -22,9 +19,11 @@ public class BassoonServer {
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
     public static PriorityBlockingQueue<GameEvent> inputQueue;
+    public static HashMap<ChannelHandlerContext, User> users;
 
     public static void main(String[] args) throws Exception {
         inputQueue = new PriorityBlockingQueue<GameEvent>();
+        users = new HashMap<ChannelHandlerContext, User>();
 
         // Configure SSL.
         final SslContext sslCtx;
@@ -52,7 +51,7 @@ public class BassoonServer {
                                 p.addLast(sslCtx.newHandler(ch.alloc()));
                             }
                             //p.addLast(new LoggingHandler(LogLevel.INFO));
-                            p.addLast(new BassoonServerInputHandler(inputQueue));
+                            p.addLast(new BassoonServerInputHandler(inputQueue, users));
                         }
                     });
 

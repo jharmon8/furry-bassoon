@@ -23,18 +23,18 @@ import io.netty.util.CharsetUtil;
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) {
-            System.out.println("Channel is active!");
+            System.out.println("Debug: Channel is active!");
         }
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            System.out.print("Reading... ");
+            System.out.print("Debug: Reading... ");
             builder.append(((ByteBuf) msg).toString(CharsetUtil.UTF_16));
         }
 
         @Override
         public void channelReadComplete(ChannelHandlerContext ctx) {
-            System.out.println("Server says: " + builder.toString());
+            System.out.println("Received> " + builder.toString());
             builder = new StringBuilder();
         }
 

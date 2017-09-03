@@ -4,13 +4,16 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class GameEvent implements Comparable<GameEvent> {
     public long timestamp;
-    public String msg;
-    public ChannelHandlerContext ctx;
+    public String userMsg;
 
-    public GameEvent(long timestamp, String msg, ChannelHandlerContext ctx) {
+    public GameEventType type;
+    public User user;
+
+    public GameEvent(long timestamp, String userMsg, GameEventType type, User user) {
         this.timestamp = timestamp;
-        this.msg = msg;
-        this.ctx = ctx;
+        this.userMsg = userMsg;
+        this.type = type;
+        this.user = user;
     }
 
     @Override
